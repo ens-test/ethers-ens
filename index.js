@@ -311,16 +311,15 @@ var SimpleRegistrarInterface = [
 ];
 
 
-function Registrar(providerOrSigner) {
+function Registrar(providerOrSigner, ensaddress) {
     if (!(this instanceof Registrar)) { throw new Error('missing new'); }
 
     // Passed in a boolean, indicating testnet if true (or mainnet if false)
     // without a signer (lookup only)
     if (typeof(providerOrSigner) === 'boolean') {
+        throw { message: "zchn 1451: this is unexpected." }
         providerOrSigner = ethers.providers.getDefaultProvider(providerOrSigner);
     }
-
-    this.signer = null;
 
     // Default; no signer on mainnet (lookup only)
     if (!providerOrSigner) {
@@ -330,13 +329,19 @@ function Registrar(providerOrSigner) {
     } else if (providerOrSigner.provider) {
         this.provider = providerOrSigner.provider;
         this.signer = providerOrSigner;
-
+        throw { message: "zchn 1452: this is unexpected." }
     // Custom provider, no signer (lookup only)
     } else {
         this.provider = providerOrSigner;
     }
 
     this.config = (this.provider.testnet ? Registrar.config.testnet: Registrar.config.mainnet);
+    if (ensaddress) {
+      this.config.ensAddress = ensaddress;
+    }
+
+    console.log("this(Registrar).config: ")
+    console.log(this.config)
 
     this._ensLookup = {};
 }

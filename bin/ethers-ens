@@ -67,6 +67,7 @@ function showHelp(error) {
     console.log('    --account ACCOUNT  The JSON wallet to use');
     console.log('    --rpc NODE         Use the JSON-RPC node');
     console.log('    --testnet          Use the ropsten test network');
+    console.log('    --ensaddress       Address of the ENS contract');
     console.log('    --check-password   Require the password to check JSON wallet');
     console.log('    --extra EXTRA      Send extra ether to mask the bid value');
     console.log('    --salt SALT        The salt to use (otherwise compute; recommended)');
@@ -80,6 +81,7 @@ function showHelp(error) {
 
     if (error) {
         console.log('Error: ' + error.message);
+        console.log(error);
         console.log('');
         process.exit(1);
     }
@@ -94,6 +96,7 @@ try {
     var opts = getopts({
         account: '',
         extra: '',
+        ensaddress: '',
         'gas-price': '',
         nonce: '',
         owner: '',
@@ -120,7 +123,7 @@ try {
 
     // Prepare a provider (possibly on testnet)
     if (opts.options.rpc) {
-        var provider = new ethers.providers.JsonRpcProvider(opts.options.rpc, opts.flags.testnet);
+      var provider = new ethers.providers.JsonRpcProvider(opts.options.rpc, opts.flags.testnet);
     } else {
         //var provider = new ethers.providers.EtherscanProvider(opts.flags.testnet);
         //var provider = new ethers.providers.InfuraProvider(opts.flags.testnet);
@@ -433,13 +436,14 @@ try {
             throw new Error('unknown command - ' + command);
     }
 
+    // console.log("opts.options.ensaddress = " + opts.options.ensaddress)
+
     // If there was an account required, the providerOrSigner has entangled it in,
     // the above switch/case statement, so we can now bind it to the registrar
-    registrar = new Registrar(providerOrSigner);
+    registrar = new Registrar(providerOrSigner, opts.options.ensaddress);
 
     // Make sure people know who they are talking to
     console.log('Network: ' + (registrar.provider.testnet ? "testnet": "mainnet"));
-
 } catch (error) {
     showHelp(error);
 }
@@ -1300,7 +1304,7 @@ switch (command) {
             });
         })();
         break;
-    
+
     case 'set-resolver':
         (function() {
             var name = opts.args.shift();
