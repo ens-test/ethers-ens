@@ -329,7 +329,6 @@ function Registrar(providerOrSigner, ensaddress) {
     } else if (providerOrSigner.provider) {
         this.provider = providerOrSigner.provider;
         this.signer = providerOrSigner;
-        throw { message: "zchn 1452: this is unexpected." }
     // Custom provider, no signer (lookup only)
     } else {
         this.provider = providerOrSigner;

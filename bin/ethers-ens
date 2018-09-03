@@ -770,6 +770,9 @@ switch (command) {
                     console.log(result.name);
                     dumpNameInfo(result);
                 });
+            }).catch(function(error) {
+                console.log('zchn 1526: error is')
+                console.log(error)
             });
         })();
         break;
